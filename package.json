@@ -9,7 +9,7 @@
     "@mui/lab": "^5.0.0-alpha.59",
     "@mui/material": "^5.2.3",
     "@testing-library/jest-dom": "^5.15.1",
-    "@testing-library/react": "^11.2.7",
+    "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^12.8.3",
     "date-fns": "^2.27.0",
     "firebase": "^9.0.0",
