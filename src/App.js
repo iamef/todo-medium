@@ -36,22 +36,21 @@ function App() {
   // effect to load gapi
   useEffect(() => {
     console.log("gapi useEffect");
-    if(!gapiState.gapiLoaded){
-      loadGoogleScript(() => {
-        setGapiState({...gapiState, gapiLoaded: true});    
+    let cancelled = false;
+
+    loadGoogleScript(() => {
+      if (!cancelled) {
+        setGapiState(prev => ({...prev, gapiLoaded: true}));
         handleClientLoad((isSignedIn) => {
-          setGapiState({...gapiState, gapiLoaded: true, gapiSignedIn: isSignedIn});
+          if (!cancelled) {
+            setGapiState(prev => ({...prev, gapiLoaded: true, gapiSignedIn: isSignedIn}));
+          }
         });
-        // console.log("updating gapi State")
-      });
-    }
-  }, 
-  // [] necessary because this would run after every render (bad)
-  // having a functional update setGapiState(g => ...)
-  // doesn't seem to work 
-  // since setGapiState is called twice in the useEffect
-  // eslint-disable-next-line
-  []); 
+      }
+    });
+
+    return () => { cancelled = true; };
+  }, []); 
 
   // effect for firebase login state changes
   useEffect(() => {
