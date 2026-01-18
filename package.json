@@ -8,6 +8,7 @@
     "@mui/icons-material": "^6.3.0",
     "@mui/lab": "^5.0.0-alpha.59",
     "@mui/material": "^6.3.0",
+    "@mui/x-date-pickers": "^7.23.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",
