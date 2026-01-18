@@ -210,7 +210,6 @@ const Form = () => {
                     {/* attempts to change color https://github.com/mui-org/material-ui-pickers/issues/393 */}
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DateTimePicker
-                            renderInput={(props) => <TextField {...props} />}
                             // required={formData.deadlineType !== "noDeadline"}
                             value={formData.dueDate}
                             label="Due Date"
@@ -220,11 +219,15 @@ const Form = () => {
                                     setFormData({...formData, dueDate: e, deadlineType: "hard"});
                                 else
                                     setFormData({...formData, dueDate: e});
-                                
+
                                 setQuickAdd({...quickAdd, formModified: true});
                             }}
-                            className="textfield"
-                            size="medium"
+                            slotProps={{
+                                textField: {
+                                    className: "textfield",
+                                    size: "medium"
+                                }
+                            }}
                         />
                     </LocalizationProvider>
 
@@ -332,15 +335,18 @@ const Form = () => {
 
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DateTimePicker
-                        renderInput={(props) => <TextField {...props} />}
                         // required={formData.deadlineType !== "noDeadline"}
                         value={formData.endRecurring}
                         label="End Recurring"
                         onChange={(e) => {
                             setFormData({...formData, endRecurring: e});
                         }}
-                        className="textfield"
-                        size="medium"
+                        slotProps={{
+                            textField: {
+                                className: "textfield",
+                                size: "medium"
+                            }
+                        }}
                     />
                     </LocalizationProvider>
                 
