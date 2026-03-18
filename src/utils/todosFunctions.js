@@ -1,4 +1,4 @@
-function todosDateTimeParse(todoDateTimeStr){
+export function todosDateTimeParse(todoDateTimeStr){
   if(todoDateTimeStr == null){
     return null
   }
@@ -46,8 +46,14 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
   // console.log("SORTED", sortedTodos)
   
   var currBufferMS = 0;
-  var prevTodoDueDate = new Date()
+  
+  const nowDate = new Date()
+  const threeWeeksDate = new Date()
+  threeWeeksDate.setDate(nowDate.getDate() + 21)
+
+  var prevTodoDueDate = nowDate
   var prevTodoName = "none, 1st todo"
+  
   
   // calculate for all priorities
   for(var todo of sortedTodos){
@@ -63,8 +69,15 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
       buffersById[todo.id]["bufferMS"] = "soft"
       continue;
     }
+
     
     var todoDueDate = todosDateTimeParse(todo.dueDate)
+    
+
+    if(todoDueDate > threeWeeksDate){
+      buffersById[todo.id]["bufferMS"] = "3wk"
+      continue;
+    }
     
     var prevBufferMS = currBufferMS;
     var msBetweenTasks = Math.max(0, todoDueDate - prevTodoDueDate);
@@ -162,10 +175,13 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
   for(var i=1; i < priorityLevels.length; i++){
     var msLowerPriorityTasks = 0
     for(todo of sortedTodos){
-      if(priorityLevels.indexOf(todo.priority) >= i){
-        buffersById[todo.id]["bufferMS_" + priorityLevels[i]] = buffersById[todo.id]["bufferMS"] + msLowerPriorityTasks
-      }else{
-        msLowerPriorityTasks += Number(todo.estTime) * 60*60*1000
+      
+      if(todosDateTimeParse(todo.dueDate) < threeWeeksDate){
+        if(priorityLevels.indexOf(todo.priority) >= i){
+          buffersById[todo.id]["bufferMS_" + priorityLevels[i]] = buffersById[todo.id]["bufferMS"] + msLowerPriorityTasks
+        }else{
+          msLowerPriorityTasks += Number(todo.estTime) * 60*60*1000
+        }
       }
     }
 
@@ -251,6 +267,7 @@ export function parseDate(str){
   // TODO add on
   // TODO add day number checks for 31+ (ex: January 39th)
   if(!dateFound){
+      // TODO think about enums
       var monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
       for(var i=0; i < monthNames.length; i++){
           // console.log(monthStr)

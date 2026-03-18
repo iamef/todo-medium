@@ -1,20 +1,20 @@
-import { motion } from 'framer-motion';
 import React from 'react';
+
 import { fs } from '../firebase';
 
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import { motion } from 'framer-motion';
 
-import { TableContainer, Table, TableRow, TableCell, TableBody, TableHead, Button } from '@mui/material';
-import { calculateBuffer } from '../utils/todosFunctions';
-import { collection, deleteDoc, doc, getDoc, onSnapshot, query, setDoc, updateDoc } from 'firebase/firestore';
+import { TableContainer, Table, TableRow, TableCell, TableBody, TableHead, Button, TableSortLabel } from '@mui/material';
+import { calculateBuffer, todosDateTimeParse } from '../utils/todosFunctions';
+import { collection, doc, getDoc, onSnapshot, query, setDoc } from 'firebase/firestore';
+import TodoItem from './TodoItem';
+
 class TodoList extends React.Component{
     constructor(props){
         super(props);
         console.log("Todolist props", props);
         
-        this.initializeTodolist = this.initializeTodolist.bind(this)
+        this.initializeTodolist = this.initializeTodolist.bind(this);
         
         // need the todoList because 
         // this.state.todoList can be mappable
@@ -24,6 +24,8 @@ class TodoList extends React.Component{
         // making todoList into a variable doesn't work
         // the todolist won't update when I click complete and stuff
         this.state = { todoList: false, hardDeadlineOnlyBuffer: false }
+
+        this.orderBy = ["complete", "priority", "dueDate", "folder", "list"]
         
         // making this into a variable does seem to work
         // and this updates in the todolist app
@@ -33,6 +35,66 @@ class TodoList extends React.Component{
         this.todoFilePath = props.userFirebasePath +  "/Todos";
         
         this.unsubscribeFirebaseTodolist = () => {};
+
+        this.headCells = [
+            {
+              firebaseKey: ['folder', 'list'],
+              id: 'todoFolderList',
+              numeric: false,
+              disablePadding: true,
+              label: 'folder/list',
+              align: "left"
+
+            },
+            {
+              firebaseKey: 'atitle',
+              id: 'todoTitle',
+              numeric: false,
+              disablePadding: true,
+              label: 'title',
+              align: "left"
+            },
+            {
+              firebaseKey: 'dueDate',
+              id: 'todoDueDate',
+              numeric: false,
+              disablePadding: false,
+              label: 'dueDate',
+              align: "right"
+            },
+            {
+              firebaseKey: 'deadlineType',
+              id: 'todoDeadlineType',
+              numeric: true,
+              disablePadding: false,
+              label: 'dType',
+              align: "right"
+            },
+            {
+              firebaseKey: 'estTime',
+              id: 'todoEstimatedTime',
+              numeric: true,
+              disablePadding: false,
+              label: 'eT',
+              align: "right"
+            },
+            {
+              firebaseKey: 'priority',
+              id: 'todoPriority',
+              numeric: false,
+              disablePadding: false,
+              label: 'priority',
+              align: "right"
+            },
+            {
+              firebaseKey: 'bufferHrs',
+              id: 'todoBuffer',
+              numeric: true,
+              disablePadding: false,
+              label: 'buffer',
+              align: "right"
+            },
+        ];
     }
 
     componentDidMount(){
@@ -147,7 +209,7 @@ class TodoList extends React.Component{
                 // TODO implement calendar stuff later
                 if(this.props.gapiSignedIn === true){
                     this.getTodoListWithBuffers(fsTodoList, (todoListWithBuffers) => {
-                        todoListWithBuffers.sort(this.sortTodosFunction("priority", "complete", "folder", "list", "dueDate"))
+                        todoListWithBuffers.sort(this.compareForMultipleProperties(...this.orderBy))
                         this.setState({todoList: todoListWithBuffers});
                     })
                 }else{
@@ -155,7 +217,7 @@ class TodoList extends React.Component{
                     for(var todo of fsTodoList){
                         todo.bufferHrs = "Log Into GCAL"
                     }
-                    fsTodoList.sort(this.sortTodosFunction("priority", "complete", "folder", "list", "dueDate"))
+                    fsTodoList.sort(this.compareForMultipleProperties(...this.orderBy))
                     this.setState({todoList: fsTodoList});
                 }
 
@@ -224,9 +286,9 @@ class TodoList extends React.Component{
     // TODO move this to TodoLIst functions at some point
     // TODO what if I just had a stable sorting function. Bruh...
     // actually according to mozilla.org, it is stable. https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-    sortTodosFunction(...argsTuple){
+    compareForMultipleProperties(...sortOrder){
         
-        function compare(item1, item2, type, ascending=true){
+        function singlePropertyCompare(item1, item2, type, ascending=true){
             if(type === 'dueDate'){
                 var ret;
     
@@ -237,7 +299,7 @@ class TodoList extends React.Component{
                 }else if(item2 === ''){
                     ret = -1 // this means item1 - item2 is negative
                 }
-                ret = Date.parse(item1) - Date.parse(item2)
+                ret = todosDateTimeParse(item1) - todosDateTimeParse(item2)
     
                 return (ascending ? ret : -1*ret)
             }else if(type === "priority"){
@@ -255,7 +317,7 @@ class TodoList extends React.Component{
             
             // console.log(argsTuple)
 
-            for(var arg of argsTuple){
+            for(var arg of sortOrder){
                 // console.log(arg)
                 
                 var type, sortAscending;
@@ -267,7 +329,7 @@ class TodoList extends React.Component{
                     sortAscending = true;
                 }
 
-                var res = compare(item1[type], item2[type], type, sortAscending);
+                var res = singlePropertyCompare(item1[type], item2[type], type, sortAscending);
                 
                 // console.log(item1[type], item2[type], type, sortAscending, res)
 
@@ -278,37 +340,13 @@ class TodoList extends React.Component{
         }
     }
     
-    deleteTodo(todo){
-        var todoDoc = doc(collection(fs, this.todoFilePath), todo.id)
-        console.log(todoDoc.id, todoDoc)
-        deleteDoc(todoDoc)
+    sortedArray(arr, ...sortOrder){
+        // debugger;
+        console.log(sortOrder)
+        let result = [...arr];
+        result.sort(this.compareForMultipleProperties(...sortOrder))
+        return result;
     }
-    
-    completeTodo(todo){
-        // TODO COMPLETE SEEMS TO BE BUGGY!!!
-        var todoDoc = doc(collection(fs, this.todoFilePath), todo.id)
-        console.log("completeTodo", todoDoc.id, todoDoc, "from " + todo.complete + " to " + !todo.complete)
-        updateDoc(todoDoc, {complete: !todo.complete})
-        
-        // // https://stackoverflow.com/questions/29537299/react-how-to-update-state-item1-in-state-using-setstate
-        // var foundIndex = this.state.todoList.find((todo) => todo.id === todo.id)
-        
-        // var todoListCopy = [...this.state.todoList]
-        // todo.complete = !todo.complete // update todo item
-        // todoListCopy[foundIndex] = todo
-        // this.setState({todoList: todoListCopy})
-    }
-
-    editTodo(todo, item){
-        var todoDoc = doc(collection(fs, this.todoFilePath), todo.id)
-        console.log(todoDoc.id, todoDoc)
-
-        var updatedData = prompt("Please update " + item, todo[item])
-
-        if(updatedData !== null)
-            updateDoc(todoDoc, {[item]: updatedData}) 
-    }
-
     
     render(){
         return (
@@ -337,63 +375,30 @@ class TodoList extends React.Component{
             <Table sx={{ minWidth: 650 }} aria-label="simple table" padding="none" >
                 {/* // TODO add table based sorting! https://mui.com/components/tables/#sorting-amp-selecting */}
                 <TableHead>
-                <TableRow>
-                    <TableCell></TableCell>
-                    <TableCell>folder/list</TableCell>
-                    <TableCell>atitle</TableCell>
-                    <TableCell align="right">dueDate</TableCell>
-                    <TableCell align="right">dType</TableCell>
-                    <TableCell align="right">eT</TableCell>
-                    <TableCell align="right">priority</TableCell>
-                    <TableCell align="right">buffer</TableCell>
-                </TableRow>
+                    <TableRow key="header">
+                        <TableCell></TableCell>
+                        {this.headCells.map((cellJson) => 
+                            <TableCell align={cellJson.align}>
+                                <TableSortLabel
+                                    active={this.orderBy[1] === cellJson.firebaseKey}
+                                    onClick={() => {
+                                        this.setState({todoList: this.sortedArray(this.state.todoList, "complete", cellJson.firebaseKey)});
+                                        this.orderBy.splice(1,0,cellJson.firebaseKey)
+                                        this.orderBy = [...new Set(this.orderBy)]
+                                        console.log("clicked", cellJson.label, this.orderBy);
+                                    }}
+                                >{cellJson.label}</TableSortLabel>
+                            </TableCell>
+                        )}
+                    </TableRow>
                 </TableHead>
                 <TableBody>
                 {this.state.todoList ?
                     this.state.todoList.map((todo) => 
-                        <TableRow
-                        key={todo.id}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        className={todo.complete ? "complete" : "pending"}
-                        >
-                        <TableCell className={todo.complete ? "complete" : "pending"}>
-                            {todo.complete ?
-                                <CheckCircleIcon
-                                    className='icon'
-                                    onClick={ () => this.completeTodo(todo)}
-                                    fontSize='large'
-                                /> :
-                                <CheckCircleOutlineIcon
-                                    className='icon'
-                                    onClick={ () => this.completeTodo(todo) }
-                                    fontSize='large'
-                                />
-                            }
-                            {/* <motion.div> */}
-                                <HighlightOffIcon
-                                    className='icon'
-                                    onClick={ () => this.deleteTodo(todo) }
-                                    fontSize='large'
-                                />
-                            {/* </motion.div> */}
-                        </TableCell>
-                        <TableCell component="th" scope="row" className={todo.complete ? "complete" : "pending"}>
-                            { todo.folder + "/" + todo.list }
-                        </TableCell>
-                        <TableCell component="th" scope="row" className={todo.complete ? "complete" : "pending"}>
-                            {todo.atitle}
-                        </TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"} onDoubleClick={() => this.editTodo(todo, "dueDate")}>{todo.dueDate}</TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"} onDoubleClick={() => this.editTodo(todo, "deadlineType")}>{todo.deadlineType}</TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"} onDoubleClick={() => this.editTodo(todo, "estTime")}>{todo.estTime}</TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"} onDoubleClick={() => this.editTodo(todo, "priority")}>{todo.priority}</TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"}>{todo.bufferHrs ? todo.bufferHrs : "loading"}</TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"}>{todo.bufferHrs_tbd ? todo.bufferHrs_tbd : "loading"}</TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"}>{todo.bufferHrs_medium ? todo.bufferHrs_medium : "loading"}</TableCell>
-                        <TableCell align="right" className={todo.complete ? "complete" : "pending"}>{todo.bufferHrs_high ? todo.bufferHrs_high : "loading"}</TableCell>
-                        </TableRow>
+                        <TodoItem todo={todo} headCells={this.headCells} todoFilePath={this.todoFilePath}/>
                     )
-                    : null
+                    :
+                    null
                 }
                 </TableBody>
             </Table>
