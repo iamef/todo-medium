@@ -1,30 +1,98 @@
 @import url("https://fonts.googleapis.com/css2?family=Bree+Serif&family=Caveat:wght@500&display=swap");
 
 body {
+  /* Doesn't seem to do much */
+  /* width: 100vw;
+  height: 100vh; */
   background-color: beige;
   /* background: url("http://superdevresources.com/wp-content/uploads/2014/02/pattern-background.png"); */
   font-family: "Bree Serif", serif;
 }
 
-.app {
-  height: 10em;
+/* Didn't seem to do anything */
+/* .app { */
+  /* width: 100vw;
+  height: 100vh; */
+  
+  /* height: 10em; */
+  /* position: relative; */
+/* } */
+
+.sidebar{
+  height: 100%;
+  width: 300px;
+  background-color: aqua;
+
+  position: fixed;
+}
+
+.sidebarList{
+  height: auto;
+  width: auto;
+  
+  /* This gets rid of the bullet points */
+  padding: 0%;
+
+  background-color:blueviolet;
+}
+
+.sidebarList .row{
+  /* somehow when you have height as 100%, 
+  only 1st sidebar item actually shows up*/
+  height: auto; 
+  /* padding: 10px; */
+  background-color: #f71aa2;
+
+  /* These 2 statements make it so that icon and row are in the same line */
+  /* display: flex;
+  flex-direction: row; */
+}
+
+.sidebarList .row.folder{
+  padding: 5px;
+}
+
+.sidebarList .row.list{
+  padding-left: 5px;
+  margin: 0%;
+}
+
+.sidebarList .row:hover{
+  cursor: pointer;
+  background-color: hotpink;
+}
+
+.sidebarList .folderList{
+  padding: 0%;
+}
+
+.topRight{
+  position: fixed;
+  float: right;
+}
+.calendarChecklist{
+  margin-left: 300px;
+  padding: 1%;
+  /* means relative to whatever position it would have been */
   position: relative;
+  display:inline-block;
 }
 
 .todoapp {
-  width: 90%;
-  max-width: 900px;
-  margin-left: auto;
+  /* width: 90%; */
+  /* width: 100%; */
+  /* max-width: 900px; */
+  margin-left: 300px;
   margin-right: auto;
-  margin-top: 50px;
+  /* margin-top: 50px; */
   text-align: center;
   float: center;
   padding: 50px;
   background: linear-gradient(10deg, #ff961d 0%, #f71aa2 100%);
   color: #fff;
   border: 0px solid rebeccapurple;
-  border-radius: 10px;
-  box-shadow: 10px 10px rgb(219, 81, 81);
+  /* border-radius: 10px; */
+  /* box-shadow: 10px 10px rgb(219, 81, 81); */
 }
 
 .todoapp h1,

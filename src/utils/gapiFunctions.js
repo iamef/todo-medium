@@ -2,15 +2,15 @@
 export function loadGoogleScript(onLoadFunc){
   // I feel like adding the "function" is a typo but apparently it works?
   // console.log("Hello")
-  const id = 'google-js'
-  const src = "https://apis.google.com/js/api.js" // Quad used platform.js
+  const id = "google-js";
+  const src = "https://apis.google.com/js/api.js"; // Quad used platform.js
 
-  const firstJs = document.getElementsByTagName('script')[0] // because react
+  const firstJs = document.getElementsByTagName("script")[0]; // because react
 
   if(document.getElementById(id)) return;
   else{
-    const js = document.createElement('script');
-    js.id = id
+    const js = document.createElement("script");
+    js.id = id;
     js.src = src;
     js.onload = onLoadFunc; // fascinating
     firstJs.parentNode.insertBefore(js, firstJs);
@@ -30,7 +30,7 @@ const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 
 
 /**
@@ -40,7 +40,7 @@ var SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 export function handleClientLoad(updateSigninCallback){
   if(window.gapi === undefined) return;
   
-  console.log("client load yay")
+  console.log("client load yay");
 
   window.gapi.load("client:auth2", () => {
     window.gapi.client.init({
@@ -63,7 +63,7 @@ export function handleClientLoad(updateSigninCallback){
     }, function(error) {
       console.log(JSON.stringify(error, null, 2));
     });
-  })
+  });
 }
 
 /**
@@ -88,8 +88,8 @@ export function gapiSignout(event) {
  */
 // function appendPre(message) {
 //   console.log(message)
-//   // var pre = document.getElementById('content');
-//   // var textContent = document.createTextNode(message + '\n');
+//   // let pre = document.getElementById("content");
+//   // let textContent = document.createTextNode(message + "\n");
 //   // pre.appendChild(textContent);
 // }
 
@@ -100,35 +100,35 @@ export function gapiSignout(event) {
  */
 export function getCalendarList(calListCallback) {
   // https://stackoverflow.com/questions/29974011/try-to-display-calendar-list-from-google-api-using-java-script
-  var request = window.gapi.client.calendar.calendarList.list();
+  const request = window.gapi.client.calendar.calendarList.list();
   request.execute(function(resp){
-    var calendars = resp.items;
+    const calendars = resp.items;
     // console.log(calendars);
     calListCallback(calendars);
   });
   
   // window.gapi.client.calendar.events.list({
-  //   'calendarId': 'primary',
-  //   'timeMin': (new Date()).toISOString(),
-  //   'showDeleted': false,
-  //   'singleEvents': true,
-  //   'maxResults': 10,
-  //   'orderBy': 'startTime'
+  //   "calendarId": "primary",
+  //   "timeMin": (new Date()).toISOString(),
+  //   "showDeleted": false,
+  //   "singleEvents": true,
+  //   "maxResults": 10,
+  //   "orderBy": "startTime"
   // }).then(function(response) {
-  //   var events = response.result.items;
-  //   appendPre('Upcoming events:');
+  //   let events = response.result.items;
+  //   appendPre("Upcoming events:");
 
   //   if (events.length > 0) {
-  //     for (var i = 0; i < events.length; i++) {
-  //       var event = events[i];
-  //       var when = event.start.dateTime;
+  //     for (let i = 0; i < events.length; i++) {
+  //       let event = events[i];
+  //       let when = event.start.dateTime;
   //       if (!when) {
   //         when = event.start.date;
   //       }
-  //       appendPre(event.summary + ' (' + when + ')')
+  //       appendPre(event.summary + " (" + when + ")")
   //     }
   //   } else {
-  //     appendPre('No upcoming events found.');
+  //     appendPre("No upcoming events found.");
   //   }
   // });
 }

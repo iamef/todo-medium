@@ -1,18 +1,19 @@
-import React from 'react'
+import React from "react";
+import PropTypes from "prop-types";
 
-import { Button, Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 
-import { fs } from '../firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { fs } from "../firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 class CalendarSelection extends React.Component{
   constructor(props){
-    console.log("CalSelection", props)
-    super(props)
+    console.log("CalSelection", props);
+    super(props);
 
-    this.state = {}
+    this.state = {};
 
-    // var formDataInitialJSON = this.props.calendars.map((calendar) => {
+    // let formDataInitialJSON = this.props.calendars.map((calendar) => {
     //     return "\"" + calendar.id + "\"" + ": false"
     // }).toString()
     // formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}")
@@ -27,16 +28,16 @@ class CalendarSelection extends React.Component{
 
   componentDidMount(){
     console.log("cal selection mount");
-    console.log(this.props.userFirebasePath)
+    console.log(this.props.userFirebasePath);
 
     getDoc(doc(fs, this.props.userFirebasePath)).then((docSnap) => {
-      var calendars = docSnap.data().calendars
+      const calendars = docSnap.data().calendars;
 
       if(calendars !== undefined){
-        var formDataInitialJSON = calendars.map((calID) => {
-          return "\"" + calID + "\": true"
+        let formDataInitialJSON = calendars.map((calID) => {
+          return "\"" + calID + "\": true";
         }).toString();
-        formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}")
+        formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}");
         
         // console.log(formDataInitialJSON)
 
@@ -52,11 +53,11 @@ class CalendarSelection extends React.Component{
   //   console.log(props, this.props, state)
   //   if(props === this.props) return;
 
-  //   // var formDataInitialJSON = ""
+  //   // let formDataInitialJSON = ""
     
   //   if(!(this.props.calendars === undefined)){
   //     console.log("this cal is not undefined")
-  //     var formDataInitialJSON = this.props.calendars.map((calendar) => {
+  //     let formDataInitialJSON = this.props.calendars.map((calendar) => {
   //         return "\"" + calendar.id + "\": false"
   //     }).toString()
   //     formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}")
@@ -70,8 +71,8 @@ class CalendarSelection extends React.Component{
   // }
 
   handleCheckChange(event, calendarId){
-    console.log(event, {...this.state})
-    this.setState(JSON.parse("{\"" + calendarId + "\": " + event.target.checked + "}"))
+    console.log(event, {...this.state});
+    this.setState(JSON.parse("{\"" + calendarId + "\": " + event.target.checked + "}"));
   }
 
   getChecked(calendarId){
@@ -86,12 +87,12 @@ class CalendarSelection extends React.Component{
   }
 
   submitCheckedCalendars(){
-    var calsToInclude = []
-    console.log(this.state)
-    for(var key in this.state){
-      if(this.state[key]) calsToInclude.push(key)
+    const calsToInclude = [];
+    console.log(this.state);
+    for(const key in this.state){
+      if(this.state[key]) calsToInclude.push(key);
     }
-    console.log(calsToInclude)
+    console.log(calsToInclude);
     setDoc(doc(fs, this.props.userFirebasePath), {calendars: calsToInclude});
     
     // set(ref(db, "Calendars"), calsToInclude)
@@ -103,7 +104,7 @@ class CalendarSelection extends React.Component{
     if(this.props.calendars === undefined) return null;
 
     return (
-      <>
+      <div className="calendarChecklist">
       <FormGroup>
           { this.props.calendars.map((calendar) => 
               <FormControlLabel 
@@ -112,6 +113,7 @@ class CalendarSelection extends React.Component{
                   label= {calendar.summary}
                   key= {calendar.id}
                   onChange={ (e) => this.handleCheckChange(e, calendar.id) }
+                  // className="calendarChecklist"
               /> 
           ) }
       </FormGroup>
@@ -120,8 +122,14 @@ class CalendarSelection extends React.Component{
       >
         Submit
       </Button>
-      </>
-  )}
+      </div>
+    );
+  }
 }
+
+CalendarSelection.propTypes = {
+  userFirebasePath: PropTypes.string,
+  calendars: PropTypes.arrayOf(PropTypes.string)
+};
 
 export default CalendarSelection;

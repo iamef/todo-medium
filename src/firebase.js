@@ -2,9 +2,9 @@
 //https://stackoverflow.com/questions/68946446/how-do-i-fix-a-firebase-9-0-import-error-attempted-import-error-firebase-app
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app"
+import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
-import { enableIndexedDbPersistence, getFirestore } from "firebase/firestore"
+import { enableIndexedDbPersistence, getFirestore } from "firebase/firestore";
 import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from "firebase/auth";
 
 // import { getAnalytics } from "firebase/analytics"; // somehow doesn't work
@@ -41,16 +41,16 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
-const db = getDatabase(firebaseApp)
-const fs = getFirestore()
+const db = getDatabase(firebaseApp);
+const fs = getFirestore();
 
 enableIndexedDbPersistence(fs)
   .catch((err) => {
-      if (err.code === 'failed-precondition') {
+      if (err.code === "failed-precondition") {
           // Multiple tabs open, persistence can only be enabled
           // in one tab at a a time.
           // ...
-      } else if (err.code === 'unimplemented') {
+      } else if (err.code === "unimplemented") {
           // The current browser does not support all of the
           // features required to enable persistence
           // ...
@@ -93,7 +93,7 @@ async function firebaseSignInWithGoogle(){
       // ...
       resolve(result);
 
-    })
+    });
   });
 }
 
