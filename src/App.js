@@ -36,47 +36,48 @@ function App() {
   // effect to load gapi
   useEffect(() => {
     console.log("gapi useEffect");
-    if(!gapiState.gapiLoaded){
-      loadGoogleScript(() => {
-        setGapiState({...gapiState, gapiLoaded: true});    
+    let cancelled = false;
+
+    loadGoogleScript(() => {
+      if (!cancelled) {
+        setGapiState(prev => ({...prev, gapiLoaded: true}));
         handleClientLoad((isSignedIn) => {
-          setGapiState({...gapiState, gapiLoaded: true, gapiSignedIn: isSignedIn});
+          if (!cancelled) {
+            setGapiState(prev => ({...prev, gapiLoaded: true, gapiSignedIn: isSignedIn}));
+          }
         });
-        // console.log("updating gapi State")
-      });
-    }
-  }, 
-  // [] necessary because this would run after every render (bad)
-  // having a functional update setGapiState(g => ...)
-  // doesn't seem to work 
-  // since setGapiState is called twice in the useEffect
-  // eslint-disable-next-line
-  []); 
+      }
+    });
+
+    return () => { cancelled = true; };
+  }, []); 
 
   // effect for firebase login state changes
   useEffect(() => {
     console.log("firebase useEffect");
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log(user);
-      if(firebaseState.firebaseSignedIn !== (user !== null)){
-        // TODO check if firebase is even online at all
-        console.log("fsignin status actually changed", firebaseState.userFilePath);
-        
-        // TODO TEST IF THIS ACTUALLY WORKS
-        console.log(firebaseState);
-        console.log({...firebaseState, firebaseSignedIn: (user !== null), userFilePath: "users/" + (user ? user.uid : null)});
-        setFirebaseState({...firebaseState, firebaseSignedIn: (user !== null), userFilePath: "users/" + (user ? user.uid : null)});
-      }
+      setFirebaseState(prev => {
+        if (prev.firebaseSignedIn !== (user !== null)) {
+          // TODO check if firebase is even online at all
+          console.log("fsignin status actually changed", prev.userFilePath);
+
+          // TODO TEST IF THIS ACTUALLY WORKS
+          console.log(prev);
+          const newState = {
+            ...prev,
+            firebaseSignedIn: (user !== null),
+            userFilePath: "users/" + (user ? user.uid : null)
+          };
+          console.log(newState);
+          return newState;
+        }
+        return prev;
+      });
     });
 
-  }, 
-  // [] necessary because this would run after every render (bad)
-  // having a functional update setFirebaseState(f => ...)
-  // doesn't seem to work 
-  // because the props for firebaseState seem to show up as undefined
-  // for some reason
-  // eslint-disable-next-line
-  []); 
+    return () => unsubscribe();
+  }, []); 
 
   return (
     <>
