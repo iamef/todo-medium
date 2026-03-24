@@ -10,7 +10,14 @@ export function loadGoogleScript(onLoadFunc){
 
   const firstJs = document.getElementsByTagName("script")[0]; // because react
 
-  if(document.getElementById(id)) return;
+  if(document.getElementById(id)) {
+    if (window.gapi && onLoadFunc) {
+      onLoadFunc();
+    } else if (onLoadFunc) {
+      document.getElementById(id).addEventListener('load', onLoadFunc);
+    }
+    return;
+  }
   if(!firstJs) return; // handle test environment where no scripts exist
 
   const js = document.createElement("script");
