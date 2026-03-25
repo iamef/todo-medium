@@ -9,7 +9,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 // import { AddCircleRoundedIcon, AddCircleOutlineOutlinedIcon } from "@mui/icons-material"
 // import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { addDoc, collection } from "firebase/firestore";
