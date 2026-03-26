@@ -30,8 +30,8 @@ export function loadGoogleScript(onLoadFunc){
 // copied from https://developers.google.com/calendar/api/quickstart/js
 
 
-const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
-const API_KEY = process.env.REACT_APP_API_KEY;
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 // console.log(CLIENT_ID)
 
