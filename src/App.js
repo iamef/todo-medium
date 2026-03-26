@@ -42,11 +42,16 @@ function App() {
     loadGoogleScript(async () => {
       if (!cancelled) {
         setGapiState(prev => ({...prev, gapiLoaded: true}));
-        listener = await handleClientLoad((isSignedIn) => {
+        const result = await handleClientLoad((isSignedIn) => {
           if (!cancelled) {
             setGapiState(prev => ({...prev, gapiLoaded: true, gapiSignedIn: isSignedIn}));
           }
         });
+        if (cancelled) {
+          result?.remove();
+        } else {
+          listener = result;
+        }
       }
     });
 
