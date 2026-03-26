@@ -1,7 +1,5 @@
 // https://github.com/QuodAI/tutorial-react-google-api-login/blob/main/src/lib/GoogleLogin.js
 export function loadGoogleScript(onLoadFunc){
-  // I feel like adding the "function" is a typo but apparently it works?
-  // console.log("Hello")
   const id = "google-js";
   const src = "https://apis.google.com/js/api.js"; // Quad used platform.js
 
@@ -23,8 +21,6 @@ export function loadGoogleScript(onLoadFunc){
 const CLIENT_ID = process.env.REACT_APP_CLIENT_ID;
 const API_KEY = process.env.REACT_APP_API_KEY;
 
-// console.log(CLIENT_ID)
-
 // Array of API discovery doc URLs for APIs used by the quickstart
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 
@@ -39,8 +35,6 @@ const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
  */
 export function handleClientLoad(updateSigninCallback){
   if(window.gapi === undefined) return;
-  
-  console.log("client load yay");
 
   window.gapi.load("client:auth2", () => {
     window.gapi.client.init({
@@ -52,16 +46,10 @@ export function handleClientLoad(updateSigninCallback){
       // Listen for sign-in state changes.
       window.gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninCallback);
       
-      // apparently this also works and doesn't disrupt the former isSignedIn listener
-      // window.gapi.auth2.getAuthInstance().isSignedIn.listen((abool) => console.log("handleLoad, isSignedIn", abool));
-      
-      // window.gapi.auth2.getAuthInstance().isSignedIn.listen(
-      
       // Handle the initial sign-in state.
       updateSigninCallback(window.window.gapi.auth2.getAuthInstance().isSignedIn.get());
-      // console.log("handle client load seemed to have worked")
     }, function(error) {
-      console.log(JSON.stringify(error, null, 2));
+      // Error is silently ignored
     });
   });
 }
@@ -86,13 +74,6 @@ export function gapiSignout(event) {
  *
  * @param {string} message Text to be placed in pre element.
  */
-// function appendPre(message) {
-//   console.log(message)
-//   // let pre = document.getElementById("content");
-//   // let textContent = document.createTextNode(message + "\n");
-//   // pre.appendChild(textContent);
-// }
-
 /**
  * Print the summary and start datetime/date of the next ten events in
  * the authorized user's calendar. If no events are found an
@@ -103,7 +84,6 @@ export function getCalendarList(calListCallback) {
   const request = window.gapi.client.calendar.calendarList.list();
   request.execute(function(resp){
     const calendars = resp.items;
-    // console.log(calendars);
     calListCallback(calendars);
   });
   

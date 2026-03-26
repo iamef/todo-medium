@@ -15,8 +15,6 @@ function Sidebar(){
     
     useEffect(() => {
         eventBus.on("todoListUpdated", (todoList) => {
-            debugger;
-
             const initialFolderMap = new Map();
             for(const todo of todoList){
                 if(initialFolderMap.get(todo.folder) === undefined){
@@ -28,10 +26,8 @@ function Sidebar(){
             const sortedFolderMap = new Map();
 
             for(const folder of [...initialFolderMap.keys()].sort()){
-                debugger;
                 sortedFolderMap.set(folder, new Set());
                 for(const list of [...initialFolderMap.get(folder)].sort()){
-                    debugger;
                     sortedFolderMap.get(folder).add(list);
                 }
             }

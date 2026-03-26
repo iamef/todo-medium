@@ -11,14 +11,12 @@ import { TableRow, TableCell } from "@mui/material";
 
 function deleteTodo(todo, todoFilePath){
     const todoDoc = doc(collection(fs, todoFilePath), todo.id);
-    console.log(todoDoc.id, todoDoc);
     deleteDoc(todoDoc);
 }
 
 function completeTodo(todo, todoFilePath){
     // TODO COMPLETE SEEMS TO BE BUGGY!!!
     const todoDoc = doc(collection(fs, todoFilePath), todo.id);
-    console.log("completeTodo", todoDoc.id, todoDoc, "from " + todo.complete + " to " + !todo.complete);
     updateDoc(todoDoc, {complete: !todo.complete});
     
     // // https://stackoverflow.com/questions/29537299/react-how-to-update-state-item1-in-state-using-setstate
@@ -32,8 +30,6 @@ function completeTodo(todo, todoFilePath){
 
 function editTodo(todo, item, todoFilePath){
     const todoDoc = doc(collection(fs, todoFilePath), todo.id);
-    console.log(todoDoc.id, todoDoc);
-
     const updatedData = prompt("Please update " + item, todo[item]);
 
     if(updatedData !== null)

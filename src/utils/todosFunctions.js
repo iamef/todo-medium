@@ -62,7 +62,6 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
         "singleEvents": true,
         "orderBy": "startTime"
       });
-      // console.log(events.result.items)
       retEvents.push(...events.result.items);
     }
     // retSortedEvents.sort((item1, item2) => {
@@ -93,7 +92,6 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
     buffersById[todo.id] = {};
     
     if(todo.dueDate === null || todo.complete){
-      // debugger;
       buffersById[todo.id]["bufferMS"] = "N/A";
       continue;
     }
@@ -120,63 +118,7 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
     const msToComplete = Number(todo.estTime) * msPerHour;
 
     if(prevTodoDueDate < todoDueDate){
-      // const eList = [];
-
-      // for(const calId of calendars){
-        
-      //   const events = await window.gapi.client.calendar.events.list({
-      //     "calendarId": calId,
-      //     "timeMin": prevTodoDueDate.toISOString(), // note this is end time
-      //     "timeMax": todoDueDate.toISOString(), 
-      //     "showDeleted": false,
-      //     "singleEvents": true,
-      //     "orderBy": "startTime"
-      //   });
-      //   // console.log(events.result.items)
-      //   eList = eList.concat(events.result.items);
-      // }
-
-      // // console.log("eList", eList)
       buffersById[todo.id]["events"] = [];
-      // for(const event of eList){
-      //   // TODO needs to work on this calculation
-      //   // console.log(event.summary, event.start, event.end);
-      //   // debugger;
-      //   // console.log(event);
-        
-      //   const startTime = Math.max(prevTodoDueDate, new Date(event.start.dateTime));
-      //   const endTime = Math.min(todoDueDate, new Date(event.end.dateTime));
-        
-      //   // console.log((endTime - startTime) / (msPerHour))
-      //   if(isNaN(startTime) || isNaN(endTime)){
-      //     console.log(event.summary, event.creator, event.htmlLink);
-      //   }else{
-      //     buffersById[todo.id]["events"].push({
-      //         summary: event.summary, 
-      //         start: event.start.dateTime,
-      //         end: event.end.dateTime,
-      //         htmlLink: event.htmlLink
-      //     });
-
-      //     msEventsBetweenTasks += (endTime - startTime);
-      //   }
-      // }
-
-      // buffersById[todo.id]["events"].sort((item1, item2) => {
-      //   if(item1.start === "" && item2.start === ""){
-      //     return 0;
-      //   }else if(item1.start === ""){
-      //     return 1;  // this means item1 - item2 is positive
-      //   }else if(item2.start === ""){
-      //     return -1; // this means item1 - item2 is negative
-      //   }
-        
-      //   return Date.parse(item1.start) - Date.parse(item2.start);
-      // });
-
-      // for(const [indexOffset,event] of sortedEventsByEnd.slice(sortedEventsIndex).entries()){
-      
-      // debugger;
       for(const event of events){        
         const eventStartTime = new Date(event.start.dateTime);
         const eventEndTime = new Date(event.end.dateTime);
@@ -202,9 +144,8 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
           const startTime = Math.max(prevTodoDueDate, eventStartTime);
           const endTime = Math.min(todoDueDate, eventEndTime);
           
-          // console.log((endTime - startTime) / (msPerHour))
           if(isNaN(startTime) || isNaN(endTime)){
-            console.log(event.summary, event.creator, event.htmlLink);
+            // skip events with invalid dates
           }else{
             buffersById[todo.id]["events"].push({
                 summary: event.summary, 
@@ -227,11 +168,8 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
       prevTodoDueDate = todoDueDate;
     }
 
-    currBufferMS = prevBufferMS + msBetweenTasks - 
+    currBufferMS = prevBufferMS + msBetweenTasks -
                             msEventsBetweenTasks - msToComplete;
-    // currBuffer -= Number(todo.estTime) * msPerHour  // convert to miliseconds
-    // console.log(todo.id)
-    
     buffersById[todo.id]["prevTodo"] = prevTodoName;
     buffersById[todo.id]["prevBuffer"] = prevBufferMS;
     buffersById[todo.id]["hoursBetweensTasks"] = hoursBetweenTasks;
@@ -303,12 +241,7 @@ export function compareForMultipleProperties(...sortOrder){
   }
   
   return function(item1, item2){
-      
-      // console.log(argsTuple)
-
       for(const arg of sortOrder){
-          // console.log(arg)
-          
           let type, sortAscending;
           if(Array.isArray(arg)){
               type = arg[0];
@@ -319,9 +252,6 @@ export function compareForMultipleProperties(...sortOrder){
           }
 
           const res = singlePropertyCompare(item1[type], item2[type], type, sortAscending);
-          
-          // console.log(item1[type], item2[type], type, sortAscending, res)
-
           if(res !== 0) return res;
       }
       
@@ -330,11 +260,8 @@ export function compareForMultipleProperties(...sortOrder){
 }
 
 export function sortedArray(arr, ...sortOrder){
-  // debugger;
-  console.log(sortOrder);
   const result = [...arr];
   sortOrder = sortOrder.flat();
-  // debugger;
   result.sort(compareForMultipleProperties(...sortOrder));
   return result;
 }
@@ -361,13 +288,11 @@ export function parseDate(str){
   const todayRegExp = /tod(ay){0,1}\s/i;
   let res = todayRegExp.exec(str);  // let res = todayRegExp.exec("todtodaytodayTODAY ")
   if(res !== null){
-      console.log(res);
       dateFound = true;
 
       day = dateNow.getDate();
       month = dateNow.getMonth();
       year = dateNow.getFullYear();
-      console.log(month, day, year, res[0], res.index);
       return {"month": month, "day": day, "year": year, startIndex: res.index, endIndex: res.index + res[0].length, matchStr: res[0]};
   }
   
@@ -377,22 +302,19 @@ export function parseDate(str){
 
   if(!dateFound){
       const tomorrowRegExp = /tom(morrow){0,1}\s/i;
-      res = tomorrowRegExp.exec(str);  // let res = todayRegExp.exec("todtodaytodayTODAY ")
-      console.log(res);
+      res = tomorrowRegExp.exec(str);
       if(res !== null){
           dateFound = true;
 
           day = dateTomorrow.getDate();
           month = dateTomorrow.getMonth();
           year = dateTomorrow.getFullYear();
-          console.log(month, day, year, res[0], res.index);
           return {"month": month, "day": day, "year": year, startIndex: res.index, endIndex: res.index + res[0].length, matchStr: res[0]};
       }
   }
   if(!dateFound){
       const tmrRegExp = /tmr{0,1}\s/i;
-      res = tmrRegExp.exec(str); // let res = todayRegExp.exec("todtodaytodayTODAY ")
-      console.log(res);
+      res = tmrRegExp.exec(str);
       if(res !== null){
           dateFound = true;
 
@@ -402,8 +324,6 @@ export function parseDate(str){
           day = dateTomorrow.getDate();
           month = dateTomorrow.getMonth();
           year = dateTomorrow.getFullYear();
-          console.log(month, day, year, res[0], res.index);
-
           return {"month": month, "day": day, "year": year, startIndex: res.index, endIndex: res.index + res[0].length, matchStr: res[0]};
       }
   }
@@ -417,7 +337,6 @@ export function parseDate(str){
       // TODO think about enums
       const monthNames = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
       for(let i=0; i < monthNames.length; i++){
-          // console.log(monthStr)
           const monthStr = monthNames[i];
 
           // eslint-disable-next-line no-magic-numbers
@@ -445,7 +364,6 @@ export function parseDate(str){
                   year += 1;
               }
               
-              console.log(month, day, year, monthRegExp, res);
               return {"month": month, "day": day, "year": year, startIndex: res.index, endIndex: res.index + res[0].length, matchStr: res[0]};
           }
       }
@@ -460,15 +378,12 @@ export function parseDate(str){
           
           const splitIndex = 3;
           const thisDayRegExp = RegExp(dayStr.substring(0, splitIndex) + "(" + dayStr.substring(splitIndex) + "){0,1}\\s", "i");
-          // res = thisDayRegExp.exec("'Sun day', 'Monday ', 'Tuesday ', 'Wed nesday', 'Thurs day', 'Fri day', 'Sat urday'")
-          // console.log(res);
           res = thisDayRegExp.exec(str);
 
           if(dayStr === "Tuesday"){
               if(res === null){
                   // Tues
                   const tuesRegExp = RegExp("Tues\\s", "i");
-                  console.log(tuesRegExp.exec("tues tuesday"));
                   res = tuesRegExp.exec(str);
               }
           }else if(dayStr === "Wednesday"){
@@ -500,9 +415,6 @@ export function parseDate(str){
               day = dateWeekday.getDate();
               month = dateWeekday.getMonth();
               year = dateWeekday.getFullYear();
-              console.log(month, day, year, res[0], res.index);
-
-              console.log(thisDayRegExp, res);
               return {"month": month, "day": day, "year": year, startIndex: res.index, endIndex: res.index + res[0].length, matchStr: res[0]};
           }
       }
@@ -535,7 +447,6 @@ export function parseTime(str){
   let hours, minutes;
 
   if(res !== null){
-      console.log(res);
       timeFound = true;
 
       hours = parseInt(res[0].match(/[01]{0,1}\d/)[0]);
@@ -544,7 +455,6 @@ export function parseTime(str){
           minutes = parseInt(res[1].substring(1));
       }
 
-      console.log(hours, minutes, res[0], res.index);
       return { hours: hours, minutes: minutes, matchStr: res[0], startIndex: res.index, endIndex: res.index + res[0].length };
 
   }
@@ -553,7 +463,6 @@ export function parseTime(str){
       const timePMRegExp = /[01]{0,1}\d(:\d\d){0,1}\s{0,1}pm\s/i;
       res = timePMRegExp.exec(str);
       if(res !== null){
-          console.log(res);
           timeFound = true;
 
           hours = parseInt(res[0].match(/[01]{0,1}\d/)[0]);
@@ -565,7 +474,6 @@ export function parseTime(str){
               minutes = parseInt(res[1].substring(1));
           }
 
-          console.log(hours, minutes, res[0], res.index);
           return { hours: hours, minutes: minutes, matchStr: res[0], startIndex: res.index, endIndex: res.index + res[0].length };
       }
   }
@@ -581,7 +489,6 @@ export function parseTime(str){
           hours = parseInt(hours);
           minutes = parseInt(minutes);
 
-          console.log(hours, minutes, res[0], res.index);
           return { hours: hours, minutes: minutes, matchStr: res[0], startIndex: res.index, endIndex: res.index + res[0].length };
       }
   }

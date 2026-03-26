@@ -35,14 +35,12 @@ function App() {
   // useEffect is called after React updates the DOM
   // effect to load gapi
   useEffect(() => {
-    console.log("gapi useEffect");
     if(!gapiState.gapiLoaded){
       loadGoogleScript(() => {
         setGapiState({...gapiState, gapiLoaded: true});    
         handleClientLoad((isSignedIn) => {
           setGapiState({...gapiState, gapiLoaded: true, gapiSignedIn: isSignedIn});
         });
-        // console.log("updating gapi State")
       });
     }
   }, 
@@ -55,16 +53,10 @@ function App() {
 
   // effect for firebase login state changes
   useEffect(() => {
-    console.log("firebase useEffect");
     onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if(firebaseState.firebaseSignedIn !== (user !== null)){
         // TODO check if firebase is even online at all
-        console.log("fsignin status actually changed", firebaseState.userFilePath);
-        
         // TODO TEST IF THIS ACTUALLY WORKS
-        console.log(firebaseState);
-        console.log({...firebaseState, firebaseSignedIn: (user !== null), userFilePath: "users/" + (user ? user.uid : null)});
         setFirebaseState({...firebaseState, firebaseSignedIn: (user !== null), userFilePath: "users/" + (user ? user.uid : null)});
       }
     });

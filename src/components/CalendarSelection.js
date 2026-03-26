@@ -8,7 +8,6 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 
 class CalendarSelection extends React.Component{
   constructor(props){
-    console.log("CalSelection", props);
     super(props);
 
     this.state = {};
@@ -27,9 +26,6 @@ class CalendarSelection extends React.Component{
   }
 
   componentDidMount(){
-    console.log("cal selection mount");
-    console.log(this.props.userFirebasePath);
-
     getDoc(doc(fs, this.props.userFirebasePath)).then((docSnap) => {
       const calendars = docSnap.data().calendars;
 
@@ -39,48 +35,20 @@ class CalendarSelection extends React.Component{
         }).toString();
         formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}");
         
-        // console.log(formDataInitialJSON)
-
         this.setState(formDataInitialJSON);
       
       }
 
-    }, (reason) => console.log(reason));
+    });
 
   }
 
-  // static getDerivedStateFromProps(props, state){
-  //   console.log(props, this.props, state)
-  //   if(props === this.props) return;
-
-  //   // let formDataInitialJSON = ""
-    
-  //   if(!(this.props.calendars === undefined)){
-  //     console.log("this cal is not undefined")
-  //     let formDataInitialJSON = this.props.calendars.map((calendar) => {
-  //         return "\"" + calendar.id + "\": false"
-  //     }).toString()
-  //     formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}")
-  //     this.setState(formDataInitialJSON);
-  //     console.log(formDataInitialJSON)
-  //   }
-  // }
-
-  // updatedJSON(){
-    
-  // }
-
   handleCheckChange(event, calendarId){
-    console.log(event, {...this.state});
     this.setState(JSON.parse("{\"" + calendarId + "\": " + event.target.checked + "}"));
   }
 
   getChecked(calendarId){
-    // console.log(this.state)
-    // return false;
-    // return this.state.includes(calendarId);
     if(this.state[calendarId] === undefined){
-    //   // firebase.database().ref("Calendars").get().then((value) => console.log(value), (reason) => console.log(reason))
       return false;
     }
     return this.state[calendarId];
@@ -88,11 +56,9 @@ class CalendarSelection extends React.Component{
 
   submitCheckedCalendars(){
     const calsToInclude = [];
-    console.log(this.state);
     for(const key in this.state){
       if(this.state[key]) calsToInclude.push(key);
     }
-    console.log(calsToInclude);
     setDoc(doc(fs, this.props.userFirebasePath), {calendars: calsToInclude});
     
     // set(ref(db, "Calendars"), calsToInclude)
