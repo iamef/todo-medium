@@ -14,7 +14,7 @@ function Sidebar(){
     }
     
     useEffect(() => {
-        eventBus.on("todoListUpdated", (todoList) => {
+        const handleTodoListUpdated = (todoList) => {
             debugger;
 
             const initialFolderMap = new Map();
@@ -37,11 +37,13 @@ function Sidebar(){
             }
 
             setSidebarElems(sortedFolderMap);
-            
-        });
+
+        };
+
+        eventBus.on("todoListUpdated", handleTodoListUpdated);
 
         // clean up
-        return () => eventBus.remove("todoListUpdated");
+        return () => eventBus.remove("todoListUpdated", handleTodoListUpdated);
     }, []);
     
     
