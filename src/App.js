@@ -37,19 +37,28 @@ function App() {
   useEffect(() => {
     console.log("gapi useEffect");
     let cancelled = false;
+    let listener = null;
 
-    loadGoogleScript(() => {
+    loadGoogleScript(async () => {
       if (!cancelled) {
         setGapiState(prev => ({...prev, gapiLoaded: true}));
-        handleClientLoad((isSignedIn) => {
+        const result = await handleClientLoad((isSignedIn) => {
           if (!cancelled) {
             setGapiState(prev => ({...prev, gapiLoaded: true, gapiSignedIn: isSignedIn}));
           }
         });
+        if (cancelled) {
+          result?.remove();
+        } else {
+          listener = result;
+        }
       }
     });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (listener) listener.remove();
+    };
   }, []); 
 
   // effect for firebase login state changes
