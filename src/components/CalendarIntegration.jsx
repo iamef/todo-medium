@@ -59,8 +59,6 @@ ShowCalendarButton.propTypes = {
 class CalendarIntegration extends React.Component{
     constructor(props){
         super(props); // props are external and are passed into the class
-        // console.log("Cal Integration", props)
-        
         this.handleShowCalClick = this.handleShowCalClick.bind(this);
         
         // state is internal
@@ -68,7 +66,6 @@ class CalendarIntegration extends React.Component{
     }
 
     componentDidMount(){
-        // console.log("calint mount", this.props, this.state)
     }
 
     componentDidUpdate(prevProps, prevState, snapshot){
@@ -95,8 +92,6 @@ class CalendarIntegration extends React.Component{
                 this.setState({calendarsAvailable: cals});
             });
         }
-        
-        console.log("clicked!");
         this.setState((state) => {
             return {showCalendars: !state.showCalendars};
         });

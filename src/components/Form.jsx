@@ -99,9 +99,6 @@ const Form = () => {
         
         setQuickAdd({...quickAdd, text: currQAStr});
 
-        // let apple = chrono.parse(currQAStr)
-        // console.log(apple)
-
         // TODO split into many diff functions
         // FIND DATE
         const dateParseData = parseDate(currQAStr);
@@ -112,8 +109,6 @@ const Form = () => {
         // rest of string is title
         let title = currQAStr;
         
-        console.log(dateParseData, timeParseData);
-
         let dueDate;
         if(dateParseData !== false){
             if(timeParseData !== false){
@@ -128,7 +123,6 @@ const Form = () => {
                 // eslint-disable-next-line no-magic-numbers
                 dueDate = new Date(dateParseData.year, dateParseData.month, dateParseData.day, 23, 59);
                 setFormData({...formData, dueDate: dueDate});
-                console.log("set form data", dueDate);
 
                 title = currQAStr.substring(0, dateParseData.startIndex) + 
                         currQAStr.substring(dateParseData.endIndex);
@@ -138,7 +132,6 @@ const Form = () => {
             else
                 setFormData({...formData, dueDate: dueDate, atitle: title});
             
-            console.log("set form data", dueDate, title);
         }else{
             if(timeParseData !== false){
                 
@@ -152,8 +145,6 @@ const Form = () => {
                     }
                 }
                 
-                console.log(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate());
-
                 dueDate = new Date(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate(), 
                                         timeParseData.hours, timeParseData.minutes);
                 
@@ -165,16 +156,11 @@ const Form = () => {
                 else
                     setFormData({...formData, dueDate: dueDate, atitle: title});
             }else{
-                // dueDate = new Date(dateParseData.year, dateParseData.month, dateParseData.day)
-                // setFormData({...formData, dueDate: dueDate})
-                // console.log("set form data", dueDate)
                 setFormData({...formData, atitle: title, dueDate: null});
             }
             
-            console.log("set form data", null, title);
         }
 
-        
         // common terms
         
         // find item name
@@ -216,7 +202,6 @@ const Form = () => {
                             value={formData.dueDate}
                             label="Due Date"
                             onChange={(e) => {
-                                console.log(e);
                                 if(formData.deadlineType === "noDeadline")
                                     setFormData({...formData, dueDate: e, deadlineType: "hard"});
                                 else
