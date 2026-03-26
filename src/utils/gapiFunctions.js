@@ -48,30 +48,29 @@ const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
  *  listeners.
  */
 export function handleClientLoad(updateSigninCallback){
-  if(window.gapi === undefined) return;
-  
+  if(window.gapi === undefined) return Promise.resolve(null);
+
   console.log("client load yay");
 
-  window.gapi.load("client:auth2", () => {
-    window.gapi.client.init({
-      apiKey: API_KEY,
-      clientId: CLIENT_ID,
-      discoveryDocs: DISCOVERY_DOCS,
-      scope: SCOPES
-    }).then(function () {
-      // Listen for sign-in state changes.
-      window.gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninCallback);
-      
-      // apparently this also works and doesn't disrupt the former isSignedIn listener
-      // window.gapi.auth2.getAuthInstance().isSignedIn.listen((abool) => console.log("handleLoad, isSignedIn", abool));
-      
-      // window.gapi.auth2.getAuthInstance().isSignedIn.listen(
-      
-      // Handle the initial sign-in state.
-      updateSigninCallback(window.window.gapi.auth2.getAuthInstance().isSignedIn.get());
-      // console.log("handle client load seemed to have worked")
-    }, function(error) {
-      console.log(JSON.stringify(error, null, 2));
+  return new Promise((resolve) => {
+    window.gapi.load("client:auth2", () => {
+      window.gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        discoveryDocs: DISCOVERY_DOCS,
+        scope: SCOPES
+      }).then(function () {
+        // Listen for sign-in state changes.
+        const listener = window.gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninCallback);
+
+        // Handle the initial sign-in state.
+        updateSigninCallback(window.window.gapi.auth2.getAuthInstance().isSignedIn.get());
+
+        resolve(listener);
+      }, function(error) {
+        console.log(JSON.stringify(error, null, 2));
+        resolve(null);
+      });
     });
   });
 }
