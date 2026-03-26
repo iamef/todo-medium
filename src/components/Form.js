@@ -6,8 +6,6 @@ import { RadioGroup, TextField, FormControlLabel, FormLabel, Radio, FormGroup, C
 
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-// import { AddCircleRoundedIcon, AddCircleOutlineOutlinedIcon } from "@mui/icons-material"
-// import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
@@ -228,17 +226,6 @@ const Form = () => {
                         />
                     </LocalizationProvider>
 
-                    {/* <TextField
-                        variant="standard"
-                        label="Due Date"
-                        type="datetime-local"
-                        value={formData.dueDate}
-                        defaultValue={new Date()}
-                        onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
-                        className="textfield"
-                        size="medium"
-                    /> */}
-
                     <RadioGroup row>
                         <FormControlLabel 
                             checked={formData.deadlineType === "hard"}
@@ -272,20 +259,6 @@ const Form = () => {
                 
                 <br/>
                 <br/>
-                
-                {/* <TextField
-                    variant="standard"
-                    label="Priority "
-                    helperText="0-100 (0 is highest, 100 is lowest)"
-                    type="number"
-                    value={formData.estTime}
-                    onChange={(e) => setFormData({...formData, estTime: e.target.value})}
-                    className="textfield"
-                    size="medium"
-                />
-                
-                <br/> */}
-
                 
                 <FormLabel component="legend">Priority</FormLabel>  
                 <RadioGroup row>
