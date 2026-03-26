@@ -9,7 +9,6 @@ import { loadGoogleScript, handleClientLoad } from "./utils/gapiFunctions";
 import { auth } from "./firebase";
 import FirebaseSignin from "./components/FirebaseSignin";
 import Sidebar from "./components/Sidebar";
-// import { getTodos } from "./utils/calculateOvershoot";
 
 function App() {
   

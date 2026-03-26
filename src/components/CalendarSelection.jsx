@@ -12,18 +12,6 @@ class CalendarSelection extends React.Component{
     super(props);
 
     this.state = {};
-
-    // let formDataInitialJSON = this.props.calendars.map((calendar) => {
-    //     return "\"" + calendar.id + "\"" + ": false"
-    // }).toString()
-    // formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}")
-    // this.setState(formDataInitialJSON);
-
-    // this.state = [];
-
-
-    
-    // this.componentDidUpdate = this.componentDidUpdate.bind(this)
   }
 
   componentDidMount(){
@@ -48,27 +36,6 @@ class CalendarSelection extends React.Component{
     }, (reason) => console.log(reason));
 
   }
-
-  // static getDerivedStateFromProps(props, state){
-  //   console.log(props, this.props, state)
-  //   if(props === this.props) return;
-
-  //   // let formDataInitialJSON = ""
-    
-  //   if(!(this.props.calendars === undefined)){
-  //     console.log("this cal is not undefined")
-  //     let formDataInitialJSON = this.props.calendars.map((calendar) => {
-  //         return "\"" + calendar.id + "\": false"
-  //     }).toString()
-  //     formDataInitialJSON = JSON.parse("{" + formDataInitialJSON + "}")
-  //     this.setState(formDataInitialJSON);
-  //     console.log(formDataInitialJSON)
-  //   }
-  // }
-
-  // updatedJSON(){
-    
-  // }
 
   handleCheckChange(event, calendarId){
     console.log(event, {...this.state});
