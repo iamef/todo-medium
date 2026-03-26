@@ -64,7 +64,7 @@ export function handleClientLoad(updateSigninCallback){
         const listener = window.gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninCallback);
 
         // Handle the initial sign-in state.
-        updateSigninCallback(window.window.gapi.auth2.getAuthInstance().isSignedIn.get());
+        updateSigninCallback(window.gapi.auth2.getAuthInstance().isSignedIn.get());
 
         resolve(listener);
       }, function(error) {
