@@ -39,11 +39,15 @@ const Form = () => {
     function addOneTodoToFirebase(todo){
         if(todo.dueDate !== null){ // || todo.dueDate !== "" || (todo.dueDate instanceof Date && isNaN(todo.dueDate))){
             // todo.dueDate = todo.dueDate.toLocaleString()
-            const datObjDueDate = todo.dueDate;
-            todo.dueDate = datObjDueDate.toLocaleDateString().split("/");
-            todo.dueDate = `${todo.dueDate[0]}/${todo.dueDate[1]}/${todo.dueDate[2].substring(2)} `;
-            todo.dueDate += datObjDueDate.toLocaleTimeString().split(" ")[0].split(":", 2).join(":");
-            todo.dueDate += datObjDueDate.toLocaleTimeString().split(" ")[1];
+            const d = todo.dueDate;
+            const month = d.getMonth() + 1;
+            const day = d.getDate();
+            const year = d.getFullYear() % 100;
+            const hours = d.getHours();
+            const minutes = d.getMinutes();
+            const ampm = hours < 12 ? "AM" : "PM";
+            const displayHours = hours % 12 || 12;
+            todo.dueDate = `${month}/${day}/${year < 10 ? "0" + year : year} ${displayHours}:${minutes < 10 ? "0" + minutes : minutes}${ampm}`;
         }
         
         const todoFilePath = "users/" + (auth.currentUser ? auth.currentUser.uid : null) + "/Todos";

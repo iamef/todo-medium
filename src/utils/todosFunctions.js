@@ -4,6 +4,9 @@ export function todosDateTimeParse(todoDateTimeStr){
   }
   const todosRegExp = /([01]{0,1}\d)\/([0123]{0,1}\d)\/(\d\d) ([01]{0,1}\d):([0-5]\d)([AP]M)/i;
   const res = todosRegExp.exec(todoDateTimeStr);
+  if(res === null){
+    return null;
+  }
   const month = parseInt(res[1]) - 1;
   const day = parseInt(res[2]);
   // eslint-disable-next-line no-magic-numbers
