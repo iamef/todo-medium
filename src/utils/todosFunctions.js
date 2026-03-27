@@ -287,8 +287,9 @@ export function compareForMultipleProperties(...sortOrder){
               ret = 1;  // this means item1 - item2 is positive
           }else if(item2 === ""){
               ret = -1; // this means item1 - item2 is negative
+          }else{
+              ret = todosDateTimeParse(item1) - todosDateTimeParse(item2);
           }
-          ret = todosDateTimeParse(item1) - todosDateTimeParse(item2);
 
           return (ascending ? ret : -1*ret);
       }else if(type === "priority"){
