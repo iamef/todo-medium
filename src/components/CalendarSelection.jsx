@@ -27,7 +27,7 @@ class CalendarSelection extends React.Component{
       
       }
 
-    });
+    }, (reason) => console.error("Failed to load calendar selection:", reason));
 
   }
 

@@ -62,7 +62,7 @@ export function handleClientLoad(updateSigninCallback){
 
         resolve(listener);
       }, function(error) {
-        console.log(JSON.stringify(error, null, 2));
+        console.error(JSON.stringify(error, null, 2));
         resolve(null);
       });
     });

@@ -138,7 +138,7 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
           const endTime = Math.min(todoDueDate, eventEndTime);
           
           if(isNaN(startTime) || isNaN(endTime)){
-            // skip events with invalid dates
+            console.warn("Skipping event with invalid dates:", event.summary, event.htmlLink);
           }else{
             buffersById[todo.id]["events"].push({
                 summary: event.summary, 

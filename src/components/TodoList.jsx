@@ -189,6 +189,7 @@ class TodoList extends React.Component{
                         const changedData = change.doc.data();
                         
                         if(found === undefined || changedData === undefined){
+                            console.error("found or changedData is undefined", found, changedData);
                             alert("found or changedData is undefined");
                         }else{
                             if(found.complete === changedData.complete && 
