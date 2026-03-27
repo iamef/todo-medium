@@ -4,6 +4,9 @@ export function todosDateTimeParse(todoDateTimeStr){
   }
   const todosRegExp = /([01]{0,1}\d)\/([0123]{0,1}\d)\/(\d\d) ([01]{0,1}\d):([0-5]\d)([AP]M)/i;
   const res = todosRegExp.exec(todoDateTimeStr);
+  if(res === null){
+    return null;
+  }
   const month = parseInt(res[1]) - 1;
   const day = parseInt(res[2]);
   // eslint-disable-next-line no-magic-numbers
@@ -281,14 +284,18 @@ export function compareForMultipleProperties(...sortOrder){
       if(type === "dueDate"){
           let ret;
 
-          if(item1 === "" && item2 === ""){
+          const noDate1 = item1 == null || item1 === "";
+          const noDate2 = item2 == null || item2 === "";
+
+          if(noDate1 && noDate2){
               ret = 0;
-          }else if(item1 === ""){
+          }else if(noDate1){
               ret = 1;  // this means item1 - item2 is positive
-          }else if(item2 === ""){
+          }else if(noDate2){
               ret = -1; // this means item1 - item2 is negative
+          }else{
+              ret = todosDateTimeParse(item1) - todosDateTimeParse(item2);
           }
-          ret = todosDateTimeParse(item1) - todosDateTimeParse(item2);
 
           return (ascending ? ret : -1*ret);
       }else if(type === "priority"){
