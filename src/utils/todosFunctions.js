@@ -281,11 +281,11 @@ export function compareForMultipleProperties(...sortOrder){
       if(type === "dueDate"){
           let ret;
 
-          if(item1 === "" && item2 === ""){
+          if(item1 === null && item2 === null){
               ret = 0;
-          }else if(item1 === ""){
+          }else if(item1 === null){
               ret = 1;  // this means item1 - item2 is positive
-          }else if(item2 === ""){
+          }else if(item2 === null){
               ret = -1; // this means item1 - item2 is negative
           }else{
               ret = todosDateTimeParse(item1) - todosDateTimeParse(item2);
