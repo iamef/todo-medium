@@ -158,6 +158,7 @@ class TodoList extends React.Component{
     }
 
     componentWillUnmount() {
+        this.unsubscribeFirebaseTodolist();
         eventBus.remove("filterFolder", this.handleFilterFolder);
         eventBus.remove("filterList", this.handleFilterList);
     }    
