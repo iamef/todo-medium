@@ -9,9 +9,9 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 // import { AddCircleRoundedIcon, AddCircleOutlineOutlinedIcon } from "@mui/icons-material"
 // import AddCircleOutlineOutlinedIcon from "@material-ui/icons/AddCircleOutlineOutlined";
 
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DateTimePicker from "@mui/lab/DateTimePicker";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { addDoc, collection } from "firebase/firestore";
 import { parseDate, parseTime } from "../utils/todosFunctions";
 
@@ -39,11 +39,15 @@ const Form = () => {
     function addOneTodoToFirebase(todo){
         if(todo.dueDate !== null){ // || todo.dueDate !== "" || (todo.dueDate instanceof Date && isNaN(todo.dueDate))){
             // todo.dueDate = todo.dueDate.toLocaleString()
-            const datObjDueDate = todo.dueDate;
-            todo.dueDate = datObjDueDate.toLocaleDateString().split("/");
-            todo.dueDate = `${todo.dueDate[0]}/${todo.dueDate[1]}/${todo.dueDate[2].substring(2)} `;
-            todo.dueDate += datObjDueDate.toLocaleTimeString().split(" ")[0].split(":", 2).join(":");
-            todo.dueDate += datObjDueDate.toLocaleTimeString().split(" ")[1];
+            const d = todo.dueDate;
+            const month = d.getMonth() + 1;
+            const day = d.getDate();
+            const year = d.getFullYear() % 100;
+            const hours = d.getHours();
+            const minutes = d.getMinutes();
+            const ampm = hours < 12 ? "AM" : "PM";
+            const displayHours = hours % 12 || 12;
+            todo.dueDate = `${month}/${day}/${year < 10 ? "0" + year : year} ${displayHours}:${minutes < 10 ? "0" + minutes : minutes}${ampm}`;
         }
         
         const todoFilePath = "users/" + (auth.currentUser ? auth.currentUser.uid : null) + "/Todos";
@@ -210,7 +214,6 @@ const Form = () => {
                     {/* attempts to change color https://github.com/mui-org/material-ui-pickers/issues/393 */}
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DateTimePicker
-                            renderInput={(props) => <TextField {...props} />}
                             // required={formData.deadlineType !== "noDeadline"}
                             value={formData.dueDate}
                             label="Due Date"
@@ -220,11 +223,15 @@ const Form = () => {
                                     setFormData({...formData, dueDate: e, deadlineType: "hard"});
                                 else
                                     setFormData({...formData, dueDate: e});
-                                
+
                                 setQuickAdd({...quickAdd, formModified: true});
                             }}
-                            className="textfield"
-                            size="medium"
+                            slotProps={{
+                                textField: {
+                                    className: "textfield",
+                                    size: "medium"
+                                }
+                            }}
                         />
                     </LocalizationProvider>
 
@@ -332,15 +339,18 @@ const Form = () => {
 
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DateTimePicker
-                        renderInput={(props) => <TextField {...props} />}
                         // required={formData.deadlineType !== "noDeadline"}
                         value={formData.endRecurring}
                         label="End Recurring"
                         onChange={(e) => {
                             setFormData({...formData, endRecurring: e});
                         }}
-                        className="textfield"
-                        size="medium"
+                        slotProps={{
+                            textField: {
+                                className: "textfield",
+                                size: "medium"
+                            }
+                        }}
                     />
                     </LocalizationProvider>
                 

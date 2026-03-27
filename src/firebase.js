@@ -25,18 +25,15 @@ const firebaseConfig = {
 };
 
 // const firebaseConfig = {
-//   apiKey: process.env.REACT_APP_API_KEY, // can be found on console.cloud.google.com
+//   apiKey: import.meta.env.VITE_API_KEY, // can be found on console.cloud.google.com
 //   authDomain: "todo-medium.firebaseapp.com",
 //   // databaseURL: "https://todo-medium-default-rtdb.firebaseio.com",
 //   projectId: "todo-medium",
 //   storageBucket: "todo-medium.appspot.com",
-//   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-//   appId: process.env.REACT_APP_APP_ID,
-//   measurementId: process.env.REACT_APP_MEASUREMENT_ID
+//   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+//   appId: import.meta.env.VITE_APP_ID,
+//   measurementId: import.meta.env.VITE_MEASUREMENT_ID
 // };
-
-// console.log(process.env)
-// console.log(process.env.REACT_APP_API_KEY)
 
 
 // Initialize Firebase
