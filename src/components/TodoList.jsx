@@ -13,8 +13,6 @@ import { eventBus } from "../utils/eventBus";
 class TodoList extends React.Component{
     constructor(props){
         super(props);
-        console.log("Todolist props", props);
-        
         this.initializeTodolist = this.initializeTodolist.bind(this);
         this.recalculateBuffer = this.recalculateBuffer.bind(this);
         
@@ -100,12 +98,8 @@ class TodoList extends React.Component{
     }
 
     componentDidMount(){
-        console.log("Todolist mount", this.props, this.state);
-
         if(this.props.firebaseSignedIn !== null){
             this.initializeTodolist();
-        }else{
-            console.log("Firebase login is null");
         }
 
         this.handleFilterFolder = (data) =>{
@@ -121,8 +115,6 @@ class TodoList extends React.Component{
     }
 
     componentDidUpdate(prevProps, prevState, snapshot){
-        console.log("Todolist update", prevProps, this.props, prevState, this.state);
-        
         this.todoFilePath = this.props.userFirebasePath +  "/Todos";
         
         // currently in iniitialize function
@@ -179,8 +171,6 @@ class TodoList extends React.Component{
         //     fsTodoQuery = query(fsTodoRef);
         // }
         
-        // console.log(fsTodoQuery);
-
         //runs whenever the todolist on Firebase gets updated
         this.unsubscribeFirebaseTodolist = onSnapshot(fsTodoRef, { includeMetadataChanges: true }, (querySnapshot) => {
             let itemAdded = false;
@@ -188,13 +178,10 @@ class TodoList extends React.Component{
             let itemRemoved = false;
             // check what kinds of changes were made to the firebase todolist
             
-            console.log(querySnapshot.size, querySnapshot.docs.length, querySnapshot.docChanges().length);
-            
-            // log what kinds of changes happened
+            // check what kinds of changes happened
             querySnapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
                     itemAdded = true;
-                    // console.log("New firebase item: ", change.doc.data());
                 }
                 if (change.type === "modified") {
                     if(querySnapshot.docChanges().length === 1 && Array.isArray(this.state.todoList)){
@@ -202,9 +189,8 @@ class TodoList extends React.Component{
                         const changedData = change.doc.data();
                         
                         if(found === undefined || changedData === undefined){
-                            debugger;
+                            console.error("found or changedData is undefined", found, changedData);
                             alert("found or changedData is undefined");
-                            console.log("found or changedData is undefined", found, changedData);
                         }else{
                             if(found.complete === changedData.complete && 
                                 found.deadlineType === changedData.deadlineType &&
@@ -212,7 +198,7 @@ class TodoList extends React.Component{
                                 found.estTime === changedData.estTime &&
                                 found.priority === changedData.priority &&
                                 found.atitle === changedData.atitle){
-                                    console.log("(no need to edit) Modified firebase item: ", change.doc.id, change.doc.data());
+                                // no need to edit
                             }else{
                                 updateItemModified = true;
                             }
@@ -222,7 +208,6 @@ class TodoList extends React.Component{
                 }
                 if (change.type === "removed") {
                     itemRemoved = true;
-                    // console.log("Removed firebase item: ", change.doc.data());
                 }
             });
 
@@ -231,7 +216,6 @@ class TodoList extends React.Component{
                 const fsTodoList = []; // when a list is empty you want it update the firestore to empty
 
                 querySnapshot.forEach((qdoc) => {
-                    // console.log(qdoc.id, " => ", qdoc.data());
                     fsTodoList.push({id: qdoc.id, ...qdoc.data()});
                 });
 
@@ -285,10 +269,7 @@ class TodoList extends React.Component{
 
     getTodoListWithBuffers(todoList, callback){
         getDoc(doc(fs, this.props.userFirebasePath)).then((docSnap) => {
-            // console.log(docSnap.data().calendars)
-
             const calendars = docSnap.data().calendars;
-            console.log(calendars);
 
             if(calendars === undefined){
                 for(const todo of todoList){
@@ -311,8 +292,6 @@ class TodoList extends React.Component{
                         }
                         
                         for(const priority of ["tbd", "medium", "high"]){
-                            // debugger;
-                            
                             bufferMS = buffers[todo.id]["bufferMS_" + priority];
                             if(typeof(bufferMS) === "number"){
                                 todo["bufferHrs_" + priority] = Number(Math.round( (bufferMS/(msPerHour)) +"e+2") + "e-2");
@@ -383,7 +362,6 @@ class TodoList extends React.Component{
                                         this.orderBy.splice(1,0,cellJson.firebaseKey);
                                         this.orderBy = [...new Set(this.orderBy)];
                                         this.setState({todoList: sortedArray(this.state.todoList, ...this.orderBy)});
-                                        console.log("clicked", cellJson.label, this.orderBy);
                                     }}
                                 >{cellJson.label}</TableSortLabel>
                             </TableCell>

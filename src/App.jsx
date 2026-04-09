@@ -34,7 +34,6 @@ function App() {
   // useEffect is called after React updates the DOM
   // effect to load gapi
   useEffect(() => {
-    console.log("gapi useEffect");
     let cancelled = false;
     let listener = null;
 
@@ -62,22 +61,16 @@ function App() {
 
   // effect for firebase login state changes
   useEffect(() => {
-    console.log("firebase useEffect");
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user);
       setFirebaseState(prev => {
         if (prev.firebaseSignedIn !== (user !== null)) {
           // TODO check if firebase is even online at all
-          console.log("fsignin status actually changed", prev.userFilePath);
-
           // TODO TEST IF THIS ACTUALLY WORKS
-          console.log(prev);
           const newState = {
             ...prev,
             firebaseSignedIn: (user !== null),
             userFilePath: "users/" + (user ? user.uid : null)
           };
-          console.log(newState);
           return newState;
         }
         return prev;

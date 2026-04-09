@@ -33,26 +33,17 @@ function FirebaseSignOutButton(props){
 class FirebaseSignin extends React.Component{
   constructor(props){
       super(props); // props are external and are passed into the class
-      console.log("FSignIn", props);
-      
       // state is internal
       // don't keep track of firebase sign in here
       // this.state = { firebasedSignedIn: props }
   }
 
   signIn(){
-      // debugger;
-      firebaseSignInWithGoogle().then((result) => {
-          console.log(result);
-      });
-      // var result = await signInWithPopup(auth, provider)
-      // console.log(result);
+      firebaseSignInWithGoogle();
   }
 
   signOut(){
-      firebaseSignOut().then(() => {
-          console.log("signed out");
-      });
+      firebaseSignOut();
   }
 
   

@@ -3,8 +3,6 @@
 
 // https://github.com/QuodAI/tutorial-react-google-api-login/blob/main/src/lib/GoogleLogin.js
 export function loadGoogleScript(onLoadFunc){
-  // I feel like adding the "function" is a typo but apparently it works?
-  // console.log("Hello")
   const id = "google-js";
   const src = "https://apis.google.com/js/api.js"; // Quad used platform.js
 
@@ -33,8 +31,6 @@ export function loadGoogleScript(onLoadFunc){
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-// console.log(CLIENT_ID)
-
 // Array of API discovery doc URLs for APIs used by the quickstart
 const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 
@@ -49,8 +45,6 @@ const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
  */
 export function handleClientLoad(updateSigninCallback){
   if(window.gapi === undefined) return Promise.resolve(null);
-
-  console.log("client load yay");
 
   return new Promise((resolve) => {
     window.gapi.load("client:auth2", () => {
@@ -68,7 +62,7 @@ export function handleClientLoad(updateSigninCallback){
 
         resolve(listener);
       }, function(error) {
-        console.log(JSON.stringify(error, null, 2));
+        console.error(JSON.stringify(error, null, 2));
         resolve(null);
       });
     });
@@ -95,13 +89,6 @@ export function gapiSignout(event) {
  *
  * @param {string} message Text to be placed in pre element.
  */
-// function appendPre(message) {
-//   console.log(message)
-//   // let pre = document.getElementById("content");
-//   // let textContent = document.createTextNode(message + "\n");
-//   // pre.appendChild(textContent);
-// }
-
 /**
  * Print the summary and start datetime/date of the next ten events in
  * the authorized user's calendar. If no events are found an
@@ -112,7 +99,6 @@ export function getCalendarList(calListCallback) {
   const request = window.gapi.client.calendar.calendarList.list();
   request.execute(function(resp){
     const calendars = resp.items;
-    // console.log(calendars);
     calListCallback(calendars);
   });
   
