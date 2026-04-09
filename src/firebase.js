@@ -14,26 +14,15 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from "firebase/
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDVsbM8eWn_6opVMb86eIvyNiKpwyFmJ1w", // can be found on console.cloud.google.com
-  authDomain: "todo-medium.firebaseapp.com",
-  databaseURL: "https://todo-medium-default-rtdb.firebaseio.com",
-  projectId: "todo-medium",
-  storageBucket: "todo-medium.appspot.com",
-  messagingSenderId: "715936135028",
-  appId: "1:715936135028:web:ca4f3f9b7354f36c769e21",
-  measurementId: "G-XX97Q3VCNM"
+  apiKey: process.env.REACT_APP_API_KEY,
+  authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_DATABASE_URL,
+  projectId: process.env.REACT_APP_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_APP_ID,
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
-
-// const firebaseConfig = {
-//   apiKey: import.meta.env.VITE_API_KEY, // can be found on console.cloud.google.com
-//   authDomain: "todo-medium.firebaseapp.com",
-//   // databaseURL: "https://todo-medium-default-rtdb.firebaseio.com",
-//   projectId: "todo-medium",
-//   storageBucket: "todo-medium.appspot.com",
-//   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-//   appId: import.meta.env.VITE_APP_ID,
-//   measurementId: import.meta.env.VITE_MEASUREMENT_ID
-// };
 
 
 // Initialize Firebase
@@ -80,26 +69,19 @@ const auth = getAuth();
 
 
 async function firebaseSignInWithGoogle(){
-  return new Promise((resolve, reject) => {
-    signInWithPopup(auth, provider).then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      // const credential = GoogleAuthProvider.credentialFromResult(result);
-      // const token = credential.accessToken;
-      // // The signed-in user info.
-      // const user = result.user;
-      // ...
-      resolve(result);
-
+  return signInWithPopup(auth, provider)
+    .catch((error) => {
+      console.error("Error signing in with Google:", error);
+      throw error;
     });
-  });
 }
 
 async function firebaseSignOut(){
-  return new Promise((resolve, reject) => {
-    signOut(auth).then(() => {
-      resolve(true);
+  return signOut(auth)
+    .catch((error) => {
+      console.error("Error signing out:", error);
+      throw error;
     });
-  });
 }
 
 
