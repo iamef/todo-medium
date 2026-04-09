@@ -101,28 +101,23 @@ class TodoList extends React.Component{
 
     componentDidMount(){
         console.log("Todolist mount", this.props, this.state);
-        
+
         if(this.props.firebaseSignedIn !== null){
             this.initializeTodolist();
         }else{
             console.log("Firebase login is null");
         }
 
-        eventBus.on("filterFolder", (data) =>{
-            // this.initializeTodolist(data);
-
+        this.handleFilterFolder = (data) =>{
             this.setState({filter: data});
+        };
 
-            // this.setState({displayedTodoList: this.todoList.filter((elem) => elem.folder === data.folder)});
-        });
-
-        eventBus.on("filterList", (data) =>{
-            // this.initializeTodolist(data);
-
+        this.handleFilterList = (data) =>{
             this.setState({filter: data});
+        };
 
-            // this.setState({displayedTodoList: this.todoList.filter((elem) => (elem.folder === data.folder && elem.list === data.list))});
-        });
+        eventBus.on("filterFolder", this.handleFilterFolder);
+        eventBus.on("filterList", this.handleFilterList);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot){
@@ -163,8 +158,9 @@ class TodoList extends React.Component{
     }
 
     componentWillUnmount() {
-        eventBus.remove("filterFolder");
-        eventBus.remove("filterList");
+        this.unsubscribeFirebaseTodolist();
+        eventBus.remove("filterFolder", this.handleFilterFolder);
+        eventBus.remove("filterList", this.handleFilterList);
     }    
 
     initializeTodolist(filter={}){
