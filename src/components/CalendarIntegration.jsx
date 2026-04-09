@@ -72,18 +72,6 @@ class CalendarIntegration extends React.Component{
     }
 
     componentDidUpdate(prevProps, prevState, snapshot){
-        // console.log("calint update", prevProps, this.props, prevState, this.state)
-        
-        /* can implement getCalendarList here, 
-           but I don't want user to sign out to have list update
-        if(prevProps.gapiSignedIn == false && this.props.gapiSignedIn == true){
-            getCalendarList((cals) => {
-                // console.log(cals)
-                this.setState({calendarsAvailable: cals});
-            })
-        } 
-        */
-        
         // calendars shouldn't be available when user signs out
         if(prevProps.gapiSignedIn === true && this.props.gapiSignedIn === false){
             this.setState({calendarsAvailable: undefined});

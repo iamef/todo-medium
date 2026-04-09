@@ -123,63 +123,8 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
     const msToComplete = Number(todo.estTime) * msPerHour;
 
     if(prevTodoDueDate < todoDueDate){
-      // const eList = [];
-
-      // for(const calId of calendars){
-        
-      //   const events = await window.gapi.client.calendar.events.list({
-      //     "calendarId": calId,
-      //     "timeMin": prevTodoDueDate.toISOString(), // note this is end time
-      //     "timeMax": todoDueDate.toISOString(), 
-      //     "showDeleted": false,
-      //     "singleEvents": true,
-      //     "orderBy": "startTime"
-      //   });
-      //   // console.log(events.result.items)
-      //   eList = eList.concat(events.result.items);
-      // }
-
-      // // console.log("eList", eList)
       buffersById[todo.id]["events"] = [];
-      // for(const event of eList){
-      //   // TODO needs to work on this calculation
-      //   // console.log(event.summary, event.start, event.end);
-      //   // debugger;
-      //   // console.log(event);
-        
-      //   const startTime = Math.max(prevTodoDueDate, new Date(event.start.dateTime));
-      //   const endTime = Math.min(todoDueDate, new Date(event.end.dateTime));
-        
-      //   // console.log((endTime - startTime) / (msPerHour))
-      //   if(isNaN(startTime) || isNaN(endTime)){
-      //     console.log(event.summary, event.creator, event.htmlLink);
-      //   }else{
-      //     buffersById[todo.id]["events"].push({
-      //         summary: event.summary, 
-      //         start: event.start.dateTime,
-      //         end: event.end.dateTime,
-      //         htmlLink: event.htmlLink
-      //     });
 
-      //     msEventsBetweenTasks += (endTime - startTime);
-      //   }
-      // }
-
-      // buffersById[todo.id]["events"].sort((item1, item2) => {
-      //   if(item1.start === "" && item2.start === ""){
-      //     return 0;
-      //   }else if(item1.start === ""){
-      //     return 1;  // this means item1 - item2 is positive
-      //   }else if(item2.start === ""){
-      //     return -1; // this means item1 - item2 is negative
-      //   }
-        
-      //   return Date.parse(item1.start) - Date.parse(item2.start);
-      // });
-
-      // for(const [indexOffset,event] of sortedEventsByEnd.slice(sortedEventsIndex).entries()){
-      
-      // debugger;
       for(const event of events){        
         const eventStartTime = new Date(event.start.dateTime);
         const eventEndTime = new Date(event.end.dateTime);
@@ -192,16 +137,6 @@ export async function calculateBuffer(todos, calendars, hardDeadlineOnlyBuffer){
         const acceptedInvite = (meAsAttendee !== undefined && meAsAttendee.responseStatus === "accepted");
 
         if(eventWithinTimeframe && (amOrganizer || acceptedInvite)){
-          //event.attendees[0].self
-          // event.attendees.filter((a) => (a.self)); or event.organizer.self === true
-          // const apple = [
-          //   {
-          //       "email": "emilyfan@mit.edu",
-          //       "self": true,
-          //       "responseStatus": "needsAction"
-          //   }
-          // ];
-
           const startTime = Math.max(prevTodoDueDate, eventStartTime);
           const endTime = Math.min(todoDueDate, eventEndTime);
           

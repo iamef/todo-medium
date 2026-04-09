@@ -24,7 +24,6 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
 
-
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getDatabase(firebaseApp);
@@ -49,24 +48,6 @@ const provider = new GoogleAuthProvider();  // for signing in
 // provider.addScope("https://www.googleapis.com/auth/calendar.readonly");
 
 const auth = getAuth();
-
-// try {
-//   debugger;
-//   console.log(auth.currentUser)
-//   if(auth.currentUser)
-//     console.log(auth.currentUser.uid)
-
-//   addDoc(collection(fs, "users/" + auth.currentUser.uid + "/not labeled"), {
-//     first: "Ada",
-//     last: "Lovelace",
-//     born: 1815
-//   }).then((result) => {
-//     console.log("Document written with ID: ", result);
-//   })
-// } catch (e) {
-//   console.error("Ada Lovelace, Error adding document: ", e);
-// }
-
 
 async function firebaseSignInWithGoogle(){
   return signInWithPopup(auth, provider)
